@@ -135,17 +135,24 @@ var SceneOne = Class.create(enchant.Group, {
 
     // Claudette
     character = spritefromAsset(game.assets['distimg/claudette1.png']);
-    character.x = WIDTH / 5;
+    character.type = 'chick';
+    character.x = WIDTH / 6;
     this.characters.push(character);
     this.addChild(character);
 
-    /*
-    // Inspecteur
-    character = spritefromAsset(game.assets['distimg/claudette1.png']);
-    character.x = WIDTH / 5;
+    // Claudette
+    character = spritefromAsset(game.assets['distimg/claudette2.png']);
+    character.type = 'chick';
+    character.x = WIDTH / 6 + this.characters[0].width;
     this.characters.push(character);
     this.addChild(character);
-    */
+
+    // Inspecteur
+    character = spritefromAsset(game.assets['distimg/jeanmichel.png']);
+    character.type = 'agent';
+    character.x = WIDTH / 6 + this.characters[0].width + this.characters[1].width;
+    this.characters.push(character);
+    this.addChild(character);
 
 
     // Preload spots
@@ -198,7 +205,7 @@ var SceneOne = Class.create(enchant.Group, {
 
     // Load marker
     var marker = this.marker = spritefromAsset(game.assets['distimg/marker.png']);
-    this.placeMarker(this.marked);
+    this.placeMarker(0);
     this.addChild(marker);
 
 
@@ -217,17 +224,19 @@ var SceneOne = Class.create(enchant.Group, {
 
   },
 
-  marked: 0,
+  marked: null,
+  markedIdx: 0,
   moveLeft: function () {
-    this.marked = Math.max(this.marked - 1, 0);
+    this.placeMarker( Math.max(this.markedIdx - 1, 0) );
   },
   moveRight: function () {
-    this.marked = Math.min(this.marked + 1, this.characters.length - 1);
+    this.placeMarker( Math.min(this.markedIdx + 1, this.characters.length - 1) );
   },
   placeMarker: function (characterIdx) {
-    this.marked = characterIdx;
+    this.markedIdx = characterIdx;
+    this.marked = this.characters[this.markedIdx];
     this.marker.tl
-      .moveTo(this.characters[this.marked].x + this.characters[this.marked].width / 2, 0, 10);
+      .moveTo(this.characters[this.markedIdx].x + this.characters[this.markedIdx].width / 2, 0, 10);
   },
 
 
@@ -319,6 +328,7 @@ var Game = function () {
     'distimg/coeurrouge.png',
     'distimg/jeanmichel.png',
     'distimg/claudette1.png',
+    'distimg/claudette2.png',
     'distimg/marker.png'
   ];
 
@@ -352,16 +362,18 @@ var Game = function () {
 
   game.throwObject = function(object, to) {
     object.tl
-      .moveTo(to.x, to.y, 10)
+      .moveTo(self.scene.marker.x - self.scene.marker.width / 2, HEIGHT * 0.1, 10)
       .then(function(){
 
+          var target = self.scene.marked;
+
           // heart on chick
-          if (object.name == 'heart' && to.name == 'chick') {
+          if (object.name == 'heart' && target.type == 'chick') {
 
           }
 
           // money on chick
-          if (object.name == 'money' && to.name == 'chick') {
+          if (object.name == 'money' && target.type == 'chick') {
 
           }
 

@@ -2,8 +2,8 @@
 /* global enchant, Class, HEIGHT, WIDTH, SPEED, TRANSITION, PLAYER_LIVES */
 
 //init enchant.js
-WIDTH = 800
-HEIGHT = 800
+WIDTH = 2048;
+HEIGHT = 1152;
 SPEED = 800;
 TRANSITION = 10;
 
@@ -104,6 +104,8 @@ var SceneInfos = Class.create(enchant.Group, {
 var SceneOne = Class.create(enchant.Group, {
   initialize: function (game) {
     var self = this;
+
+    this.game = game;
     enchant.Group.call(this);
 
     this.width   = WIDTH;
@@ -122,38 +124,52 @@ var SceneOne = Class.create(enchant.Group, {
     this.tl
       .delay(20)
       .then(function(){
-        backgrounds[currentBG].tl.fadeOut(10);
-        currentBG = (currentBG + 1) % 3;
-        backgrounds[currentBG].tl.fadeIn(10);
+        if (! self.lightsAreOff()) {
+          backgrounds[currentBG].tl.fadeOut(10);
+          currentBG = (currentBG + 1) % 3;
+          backgrounds[currentBG].tl.fadeIn(10);
+        }
       })
       .loop();
 
 
     // Preload spots
-    var spots = [];
+    var spots = this.spots = [];
     for (var i = 0; i < 3; i++) {
       spots[i] = spritefromAsset(game.assets['distimg/spot'+(i+1)+'.png']);
       spots[i].width = WIDTH;
-      spots[i].opacity = 0;
       this.addChild(spots[i]);
     }
+
+    // Load bath
+    var theBath = spritefromAsset(game.assets['distimg/bain.png']);
+    theBath.width = WIDTH;
+    this.addChild(theBath);
+
 
     // Loop spots
     var currentSpot = 0;
     this.tl
       .delay(20)
       .then(function(){
-        backgrounds[currentSpot].tl.fadeOut(10);
-        currentSpot = (currentSpot + 1) % 3;
-        backgrounds[currentSpot].tl.fadeIn(10);
+        if (! self.lightsAreOff()) {
+          spots[currentSpot].tl.fadeOut(10);
+          currentSpot = (currentSpot + 1) % 3;
+          spots[currentSpot].tl.fadeIn(10);
+        }
       })
       .loop();
 
 
+    // The "lights off" layer
+    var lightsOff = this.lightsOff = new enchant.Sprite(WIDTH, HEIGHT);
+    lightsOff.backgroundColor = 'black';
+    lightsOff.opacity = 0;
+    this.addChild(lightsOff);
+
+
     // Load switch
-    /* * /
-    var theSwitch = spritefromAsset(game.assets['distimg/switch.png']);
-    theSwitch.width = WIDTH;
+    var theSwitch = this.theSwitch = spritefromAsset(game.assets['distimg/interrupteur.png']);
     theSwitch.x = WIDTH * 0.9;
     theSwitch.y = HEIGHT * 0.7;
     theSwitch.touchEnabled = true;
@@ -163,17 +179,24 @@ var SceneOne = Class.create(enchant.Group, {
     theSwitch.addEventListener('touchstart', function() {
       self.toggleLights();
     });
-    /* */
 
-    var theBath = spritefromAsset(game.assets['distimg/bain.png']);
-    theBath.width = WIDTH;
-    this.addChild(theBath);
 
 
   },
 
+
+  lightsAreOff: function () {
+    return this.lightsOff.opacity > 0.5;
+  },
+
   toggleLights: function (event) {
-    debugger;
+    this.lightsOff.opacity = this.lightsAreOff() ? 0 : 0.8;
+    this.theSwitch.image = this.lightsAreOff() ? this.game.assets['distimg/interrupteur.png'] : this.game.assets['distimg/interrupteur2.png'];
+
+    for (var i = 0; i < 3; i++) {
+        this.spots[i].opacity = this.lightsAreOff() ? 0 : 1;
+    }
+
   },
 
 });
@@ -262,6 +285,9 @@ var Game = function () {
     'distimg/spot1.png',
     'distimg/spot2.png',
     'distimg/spot3.png',
+    'distimg/bain.png',
+    'distimg/interrupteur.png',
+    'distimg/interrupteur2.png',
   ];
 
   game.preload(preload); //preload assets png, wav etc

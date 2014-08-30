@@ -1,0 +1,24 @@
+{
+  "name": "bbqgj2014",
+  "version": "1.0.0",
+  "description": "bbqgj2014 =========",
+  "main": ".",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DogWall/bbqgj2014"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DogWall/bbqgj2014/issues"
+  },
+  "homepage": "https://github.com/DogWall/bbqgj2014",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-imagemin": "^0.8.1",
+    "jpegtran-bin": "0.2.0"
+  }
+}

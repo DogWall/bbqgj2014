@@ -104,34 +104,29 @@ var SceneInfos = Class.create(enchant.Group, {
     }
 });
 
-var SceneOneUpper = Class.create(enchant.Group, {
+var SceneOne = Class.create(enchant.Group, {
   initialize: function (game) {
     var self = this;
     enchant.Group.call(this);
 
-    this.width = WIDTH;
-    this.height = HEIGHT;
+    this.width   = WIDTH;
+    this.height  = HEIGHT;
     this.originX = WIDTH / 2;
     this.originY = HEIGHT / 2;
 
-    this.bg = addDecor(game, this, 'jour');
-
-    this.ground = addRoad(game, this, 'jour', -1);
-
-    this.objects = [
-      [], // bin for new objects
-      addBuildings(game, this, this.ground, 'j')
-      // [this.addChild(game.player)],
-      // [this.addChild(FGMarker)],
-      //  addCommon(game, this, this.ground, 3, 'elem-arbre', 'j'),
-      //  addCommon(game, this, this.ground, 2, 'elem-lampe', 'j'),
-      // addTrashes(game, this, this.ground, 'j')
-    ];
-
   }
 });
-SceneOneUpper.preload = ['sounds/Jour.mp3','sounds/Nuit.mp3','distimg/route-jour-fs8.png', 'distimg/elem-poubelles-j.png', 'distimg/elem-arbre-j.png', 'distimg/elem-lampe-j.png', 'distimg/fond-jour.png', 'distimg/decor-jour.png'];
-for (var i = 0; i < 6; i++) { SceneOneUpper.preload.push('distimg/imm' + (i+1) + '-j-fs8.png'); }
+SceneOne.preload = [
+  'sounds/Jour.mp3',
+  'sounds/Nuit.mp3',
+  'distimg/route-jour-fs8.png',
+  'distimg/elem-poubelles-j.png',
+  'distimg/elem-arbre-j.png',
+  'distimg/elem-lampe-j.png',
+  'distimg/fond-jour.png',
+  'distimg/decor-jour.png'
+];
+for (var i = 0; i < 6; i++) { SceneOne.preload.push('distimg/imm' + (i+1) + '-j-fs8.png'); }
 
 
 (function () {

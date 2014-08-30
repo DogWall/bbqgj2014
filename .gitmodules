@@ -1,3 +1,6 @@
 [submodule "ggj2014"]
 	path = ggj2014
 	url = https://github.com/DogWall/ggj2014.git
+[submodule "enchant-builds.js"]
+	path = enchant-builds.js
+	url = https://github.com/uei/enchant.js-builds

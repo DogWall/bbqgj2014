@@ -10,18 +10,7 @@ TRANSITION = 10;
 PLAYER_LIVES = 3;
 
 var FALLING_OBJECTS = [
-  'distimg/falling_alien.png',
-  'distimg/falling_baleine.png',
-  'distimg/falling_godzilla.png',
-  'distimg/falling_meteorite.png',
-  'distimg/falling_petunias.png',
-  'distimg/falling_piano.png',
-  'distimg/falling_poubellesfire.png',
-  'distimg/falling_teckel.png'
 ];
-
-var CARS_DAY = [ 'img/elem-voit2-j.png','img/elem-voit1-j.png' ];
-var CARS_NIGHT = [ 'img/elem-voit2-n.png','img/elem-voit1-n.png' ];
 
 // enchant.ENV.USE_ANIMATION  = false;
 enchant.ENV.TOUCH_ENABLED  = false;
@@ -118,13 +107,6 @@ var SceneOne = Class.create(enchant.Group, {
 });
 SceneOne.preload = [
   'sounds/Jour.mp3',
-  'sounds/Nuit.mp3',
-  'distimg/route-jour-fs8.png',
-  'distimg/elem-poubelles-j.png',
-  'distimg/elem-arbre-j.png',
-  'distimg/elem-lampe-j.png',
-  'distimg/fond-jour.png',
-  'distimg/decor-jour.png'
 ];
 for (var i = 0; i < 6; i++) { SceneOne.preload.push('distimg/imm' + (i+1) + '-j-fs8.png'); }
 
@@ -136,8 +118,7 @@ var game;
 var settings = {
   player: {
     lives: 3,
-    sprite_j: 'distimg/jeanjacques-j-fs8.png',
-    sprite_n: 'distimg/darkjj.png'
+    sprite: 'distimg/claude.png',
   },
   levels: [
     {
@@ -147,55 +128,50 @@ var settings = {
 };
 
 
+// Character
+function addCharacter (game, scene, asset) {
+  var object = new enchant.Sprite(asset.width, asset.height);
+  object.image = asset;
+  object.width = 20;
+  object.x = WIDTH / 2 - object.width / 2;
+  object.y = HEIGHT / 2 - object.height;
+  object.touchEnabled = false;
+  object.disableCollection();
+  scene.addChild(object);
+  return object;
+}
 
-/**
- * Player
- */
+// Table
+function addTable (game, scene, objects) {
+  var asset =  game.assets['table'];
+  var object = new enchant.Sprite(asset.width, asset.height);
+  object.image = asset;
+  object.width = 20;
+  object.x = WIDTH / 2 - object.width / 2;
+  object.y = HEIGHT / 2 - object.height;
+  object.touchEnabled = false;
+  object.disableCollection();
+  scene.addChild(object);
+  return object;
+}
+
+
+// Player
 var Player = Class.create(enchant.Sprite, {
-  initialize: function () {
 
+  initialize: function () {
     this.image_j = game.assets[settings.player.sprite_j];
     this.image_n = game.assets[settings.player.sprite_n];
 
-    //enchant.Sprite.call(this, this.image_j.width, this.image_j.height);
-
     enchant.Sprite.call(this, this.image_j.width/5, this.image_j.height);
     this.image = this.image_j;
-      this.counter=this.age;
+    this.counter=this.age;
     this.x = WIDTH / 2;
     this.y = HEIGHT / 2 - this.height - 150;
     this.frames = [0,1,2,3,4,3,2,1];
     this.frame = this.frames;
-
-    this.walking = true;
-  },
-  twist: function(){
-    this.tl
-      .then(function(){ 
-        this.inSceneSince = new Date();
-      })
-      .fadeOut(TRANSITION / 2)
-      .then(function(){
-        if (game.twisted) {
-          //game.upperScene.removeChild(this);
-          this.image = this.image_n;
-          //game.lowerScene.addChild(this);
-        } else {
-          // game.lowerScene.removeChild(this);
-          this.image =  this.image_j;
-          //game.upperScene.addChild(this);
-        }
-      })
-      .fadeIn(TRANSITION / 2);
-  },
-
-  onenterframe : function() {
-    if (this.age - this.counter > game.fps * 30) {
-      window.location = 'img/scenes/dead.png';
-    } else {
-      // console.log(this.age-this.counter);
-    }
   }
+
 });
 
 

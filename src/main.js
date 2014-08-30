@@ -166,7 +166,10 @@ var SceneOne = Class.create(enchant.Group, {
         if (! self.lightsAreOff()) {
           for (var i = 0; i < self.characters.length; i++) {
             self.characters[i].tl.setTimeBased();
-            self.characters[i].tl.moveY(self.characters[i].y + (Math.random() -1) * Math.sin(window.performance.now()) * 10, 10);
+            self.characters[i].tl.moveTo(
+              self.characters[i].x + (Math.random() -1) * Math.sin(window.performance.now()) * 5,
+              self.characters[i].y + (Math.random() -1) * Math.sin(window.performance.now()) * 10,
+              40);
           };
           spots[currentSpot].tl.fadeOut(10);
           currentSpot = (currentSpot + 1) % 3;

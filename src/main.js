@@ -196,6 +196,12 @@ var SceneOne = Class.create(enchant.Group, {
     });
 
 
+    // Load marker
+    var marker = this.marker = spritefromAsset(game.assets['distimg/marker.png']);
+    this.placeMarker(this.marked);
+    this.addChild(marker);
+
+
     // Load throwables
     var object = spritefromAsset(game.assets['distimg/interrupteur.png']);
     object.name = 'heart';
@@ -211,13 +217,26 @@ var SceneOne = Class.create(enchant.Group, {
 
   },
 
+  marked: 0,
+  moveLeft: function () {
+    this.marked = Math.max(this.marked - 1, 0);
+  },
+  moveRight: function () {
+    this.marked = Math.min(this.marked + 1, this.characters.length - 1);
+  },
+  placeMarker: function (characterIdx) {
+    this.marked = characterIdx;
+    this.marker.tl
+      .moveTo(this.characters[this.marked].x + this.characters[this.marked].width / 2, 0, 10);
+  },
+
 
   lightsAreOff: function () {
     return this.lightsOff.opacity > 0.5;
   },
 
   toggleLights: function (event) {
-    this.lightsOff.opacity = this.lightsAreOff() ? 0 : 0.8;
+    this.lightsOff.opacity = this.lightsAreOff() ? 0 : 0.98;
     this.theSwitch.image = this.lightsAreOff() ? this.game.assets['distimg/interrupteur.png'] : this.game.assets['distimg/interrupteur2.png'];
 
     for (var i = 0; i < 3; i++) {
@@ -300,6 +319,7 @@ var Game = function () {
     'distimg/coeurrouge.png',
     'distimg/jeanmichel.png',
     'distimg/claudette1.png',
+    'distimg/marker.png'
   ];
 
   game.preload(preload); //preload assets png, wav etc
@@ -308,7 +328,15 @@ var Game = function () {
     self.loadLevel(0);
   };
 
-  game.rootScene.addEventListener('touchstart', function() {
+  game.rootScene.addEventListener('keydown', function(event) {
+    debugger;
+  });
+
+  game.rootScene.addEventListener('touchstart', function(event) {
+    if (event.localX < WIDTH / 2)
+      self.scene.moveLeft();
+    else
+      self.scene.moveRight();
   });
 
   function changevisibility() {
@@ -356,8 +384,8 @@ Game.prototype.loadLevel = function(levelIndex) {
   this.scene = new settings.levels[levelIndex](game);
   game.rootScene.addChild(this.scene);
 
-  game.infos = new SceneInfos(game, PLAYER_LIVES, this.loose.bind(this));
-  game.rootScene.addChild(game.infos);
+  // game.infos = new SceneInfos(game, PLAYER_LIVES, this.loose.bind(this));
+  // game.rootScene.addChild(game.infos);
 };
 
 Game.prototype.loose = function() {

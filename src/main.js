@@ -101,6 +101,7 @@ var SceneOne = Class.create(enchant.Group, {
     this.width   = WIDTH;
     this.height  = HEIGHT;
 
+    // Preload backgounds
     var backgrounds = [];
     for (var i = 0; i < 3; i++) {
       var asset = game.assets['distimg/BG'+(i+1)+'.jpg'];
@@ -113,6 +114,7 @@ var SceneOne = Class.create(enchant.Group, {
       this.addChild(backgrounds[i]);
     }
 
+    // Loop backgrounds
     var currentBG = 0;
     this.tl
       .delay(20)
@@ -123,12 +125,57 @@ var SceneOne = Class.create(enchant.Group, {
       })
       .loop();
 
-  }
+
+    // Preload spots
+    var spots = [];
+    for (var i = 0; i < 3; i++) {
+      var asset = game.assets['distimg/spot'+(i+1)+'.png'];
+      spots[i] = new enchant.Sprite(asset.width, asset.height);
+      spots[i].image = asset;
+      spots[i].width = WIDTH;
+      spots[i].touchEnabled = false;
+      spots[i].disableCollection();
+      spots[i].opacity = 0;
+      this.addChild(spots[i]);
+    }
+
+    // Loop spots
+    var currentSpot = 0;
+    this.tl
+      .delay(20)
+      .then(function(){
+        backgrounds[currentSpot].tl.fadeOut(10);
+        currentSpot = (currentSpot + 1) % 3;
+        backgrounds[currentSpot].tl.fadeIn(10);
+      })
+      .loop();
+
+
+    // Load switch
+    var asset = game.assets['distimg/switch.jpg'];
+    var theSwitch = new enchant.Sprite(asset.width, asset.height);
+    theSwitch.image = asset;
+    theSwitch.width = WIDTH;
+    theSwitch.x = WIDTH * 0.9;
+    theSwitch.y = HEIGHT * 0.7;
+    theSwitch.touchEnabled = true;
+    theSwitch.disableCollection();
+    this.addChild(theSwitch);
+
+    // Plug switch
+    theSwitch.addEventListener('touchstart', function() {
+      self.toggleLights();
+    });
+
+
+  },
+
+  toggleLights: function (event) {
+    debugger;
+  },
+
 });
 SceneOne.preload = [
-  'distimg/BG1.jpg',
-  'distimg/BG2.jpg',
-  'distimg/BG3.jpg',
 ];
 for (var i = 0; i < 6; i++) { SceneOne.preload.push('distimg/imm' + (i+1) + '-j-fs8.png'); }
 
@@ -210,6 +257,9 @@ var Game = function () {
     'distimg/BG1.jpg',
     'distimg/BG2.jpg',
     'distimg/BG3.jpg',
+    'distimg/spot1.png',
+    'distimg/spot2.png',
+    'distimg/spot3.png',
   ];
 
   game.preload(preload); //preload assets png, wav etc

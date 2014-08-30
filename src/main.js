@@ -93,10 +93,6 @@ var SceneInfos = Class.create(enchant.Group, {
       }
       if (this.lives <= 0) {
         setTimeout(this.onLoose, 20);
-      } else {
-        setTimeout(function(){
-          window.ggj.twist();
-        }, 0);
       }
     }
 });
@@ -131,6 +127,16 @@ var SceneOne = Class.create(enchant.Group, {
         }
       })
       .loop();
+
+
+    // Load characters
+    var characters = this.characters = [];
+    for (var i = 0; i < 1; i++) {
+      characters[i] = spritefromAsset(game.assets['distimg/interrupteur.png']);
+      characters[i].x = WIDTH / 2 -  3 * 50 + i * 50;
+      characters[i].y = HEIGHT * 0.6;
+      this.addChild(characters[i]);
+    }
 
 
     // Preload spots
@@ -171,7 +177,7 @@ var SceneOne = Class.create(enchant.Group, {
     // Load switch
     var theSwitch = this.theSwitch = spritefromAsset(game.assets['distimg/interrupteur.png']);
     theSwitch.x = WIDTH * 0.9;
-    theSwitch.y = HEIGHT * 0.7;
+    theSwitch.y = HEIGHT * 0.3;
     theSwitch.touchEnabled = true;
     this.addChild(theSwitch);
 
@@ -181,6 +187,18 @@ var SceneOne = Class.create(enchant.Group, {
     });
 
 
+    // Load throwables
+    var object = spritefromAsset(game.assets['distimg/interrupteur.png']);
+    object.name = 'heart';
+    object.x = object.original_x = WIDTH * 0.8;
+    object.y = object.original_y = HEIGHT * 2;
+    object.touchEnabled = true;
+    this.addChild(object);
+
+
+    setInterval(function () {
+      self.game.throwObject(object, { name:'chick', x:WIDTH/2 * Math.random(), y:-100 });
+    }, 1000);
 
   },
 
@@ -248,25 +266,6 @@ function addTable (game, scene, objects) {
 }
 
 
-// Player
-var Player = Class.create(enchant.Sprite, {
-
-  initialize: function () {
-    this.image_j = game.assets[settings.player.sprite_j];
-    this.image_n = game.assets[settings.player.sprite_n];
-
-    enchant.Sprite.call(this, this.image_j.width/5, this.image_j.height);
-    this.image = this.image_j;
-    this.counter=this.age;
-    this.x = WIDTH / 2;
-    this.y = HEIGHT / 2 - this.height - 150;
-    this.frames = [0,1,2,3,4,3,2,1];
-    this.frame = this.frames;
-  }
-
-});
-
-
 
 /**
  * Main
@@ -309,6 +308,29 @@ var Game = function () {
   document.addEventListener('visibilitychange', changevisibility, false);
   document.addEventListener('webkitvisibilitychange', changevisibility, false);
 
+
+  game.throwObject = function(object, to) {
+    object.tl
+      .moveTo(to.x, to.y, 10)
+      .then(function(){
+
+          // heart on chick
+          if (object.name == 'heart' && to.name == 'chick') {
+
+          }
+
+          // money on chick
+          if (object.name == 'money' && to.name == 'chick') {
+
+          }
+
+
+          object.x = object.original_x;
+          object.y = object.original_y;
+      });
+  };
+
+
   game.start();
 };
 
@@ -334,11 +356,11 @@ Game.prototype.loadLevel = function(levelIndex) {
 Game.prototype.loose = function() {
   this.game.pause();
   setTimeout(function(){
-    window.location = 'img/scenes/Game-over.png';
+    alert('You loose');
   }, 10);
 };
 
-window.ggj = new Game();
+window.bbqggj = new Game();
 
 })();
 

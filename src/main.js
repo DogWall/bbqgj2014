@@ -38,6 +38,14 @@ Pool.prototype.add = function(v) {
 
 ////////////////////////////
 
+function spritefromAsset (asset) {
+    var sprite = new enchant.Sprite(asset.width, asset.height);
+    sprite.image = asset;
+    sprite.touchEnabled = false;
+    sprite.disableCollection();
+    return sprite;
+}
+
 
 
 //////////////////  SCENES  /////////////////////
@@ -104,13 +112,8 @@ var SceneOne = Class.create(enchant.Group, {
     // Preload backgounds
     var backgrounds = [];
     for (var i = 0; i < 3; i++) {
-      var asset = game.assets['distimg/BG'+(i+1)+'.jpg'];
-      backgrounds[i] = new enchant.Sprite(asset.width, asset.height);
-      backgrounds[i].image = asset;
+      backgrounds[i] = spritefromAsset(game.assets['distimg/BG'+(i+1)+'.jpg']);
       backgrounds[i].width = WIDTH;
-      backgrounds[i].touchEnabled = false;
-      backgrounds[i].disableCollection();
-      backgrounds[i].opacity = 0;
       this.addChild(backgrounds[i]);
     }
 
@@ -129,12 +132,8 @@ var SceneOne = Class.create(enchant.Group, {
     // Preload spots
     var spots = [];
     for (var i = 0; i < 3; i++) {
-      var asset = game.assets['distimg/spot'+(i+1)+'.png'];
-      spots[i] = new enchant.Sprite(asset.width, asset.height);
-      spots[i].image = asset;
+      spots[i] = spritefromAsset(game.assets['distimg/spot'+(i+1)+'.png']);
       spots[i].width = WIDTH;
-      spots[i].touchEnabled = false;
-      spots[i].disableCollection();
       spots[i].opacity = 0;
       this.addChild(spots[i]);
     }
@@ -152,20 +151,23 @@ var SceneOne = Class.create(enchant.Group, {
 
 
     // Load switch
-    var asset = game.assets['distimg/switch.jpg'];
-    var theSwitch = new enchant.Sprite(asset.width, asset.height);
-    theSwitch.image = asset;
+    /* * /
+    var theSwitch = spritefromAsset(game.assets['distimg/switch.png']);
     theSwitch.width = WIDTH;
     theSwitch.x = WIDTH * 0.9;
     theSwitch.y = HEIGHT * 0.7;
     theSwitch.touchEnabled = true;
-    theSwitch.disableCollection();
     this.addChild(theSwitch);
 
     // Plug switch
     theSwitch.addEventListener('touchstart', function() {
       self.toggleLights();
     });
+    /* */
+
+    var theBath = spritefromAsset(game.assets['distimg/bath.png']);
+    theBath.width = WIDTH;
+    this.addChild(theBath);
 
 
   },

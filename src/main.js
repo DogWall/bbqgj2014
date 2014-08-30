@@ -287,6 +287,8 @@ var Game = function () {
     'distimg/bain.png',
     'distimg/interrupteur.png',
     'distimg/interrupteur2.png',
+    'distimg/coeurgris.png',
+    'distimg/coeurrouge.png'
   ];
 
   game.preload(preload); //preload assets png, wav etc

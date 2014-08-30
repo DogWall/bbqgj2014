@@ -324,7 +324,6 @@ var Game = function () {
 
           }
 
-
           object.x = object.original_x;
           object.y = object.original_y;
       });
@@ -344,13 +343,8 @@ Game.prototype.loadLevel = function(levelIndex) {
   this.scene = new settings.levels[levelIndex](game);
   game.rootScene.addChild(this.scene);
 
-  // this.playerScene = new settings.levels[levelIndex].playerScene();
-  // this.player = new Player();
-  // game.player = this.player;
-  // this.playerScene.addChild(this.player);
-
-  // game.infos = new SceneInfos(game, PLAYER_LIVES, this.loose.bind(this));
-  // game.rootScene.addChild(game.infos);
+  game.infos = new SceneInfos(game, PLAYER_LIVES, this.loose.bind(this));
+  game.rootScene.addChild(game.infos);
 };
 
 Game.prototype.loose = function() {

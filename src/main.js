@@ -130,13 +130,22 @@ var SceneOne = Class.create(enchant.Group, {
 
 
     // Load characters
-    var characters = this.characters = [];
-    for (var i = 0; i < 1; i++) {
-      characters[i] = spritefromAsset(game.assets['distimg/interrupteur.png']);
-      characters[i].x = WIDTH / 2 -  3 * 50 + i * 50;
-      characters[i].y = HEIGHT * 0.6;
-      this.addChild(characters[i]);
-    }
+    var character;
+    this.characters = [];
+
+    // Claudette
+    character = spritefromAsset(game.assets['distimg/claudette1.png']);
+    character.x = WIDTH / 5;
+    this.characters.push(character);
+    this.addChild(character);
+
+    /*
+    // Inspecteur
+    character = spritefromAsset(game.assets['distimg/claudette1.png']);
+    character.x = WIDTH / 5;
+    this.characters.push(character);
+    this.addChild(character);
+    */
 
 
     // Preload spots
@@ -288,7 +297,9 @@ var Game = function () {
     'distimg/interrupteur.png',
     'distimg/interrupteur2.png',
     'distimg/coeurgris.png',
-    'distimg/coeurrouge.png'
+    'distimg/coeurrouge.png',
+    'distimg/jeanmichel.png',
+    'distimg/claudette1.png',
   ];
 
   game.preload(preload); //preload assets png, wav etc

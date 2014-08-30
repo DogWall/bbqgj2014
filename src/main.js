@@ -20,6 +20,11 @@ enchant();
 
 var Marker = Class.create(enchant.Node, { });
 
+function shuffle(o){ //v1.0
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+};
+
 ////////////////////////////
 
 function Pool () {
@@ -136,23 +141,39 @@ var SceneOne = Class.create(enchant.Group, {
     // Claudette
     character = spritefromAsset(game.assets['distimg/claudette1.png']);
     character.type = 'chick';
-    character.x = WIDTH / 6;
     this.characters.push(character);
     this.addChild(character);
 
     // Claudette
     character = spritefromAsset(game.assets['distimg/claudette2.png']);
     character.type = 'chick';
-    character.x = WIDTH / 6 + this.characters[0].width;
     this.characters.push(character);
     this.addChild(character);
 
     // Inspecteur
     character = spritefromAsset(game.assets['distimg/jeanmichel.png']);
     character.type = 'agent';
-    character.x = WIDTH / 6 + this.characters[0].width + this.characters[1].width;
     this.characters.push(character);
     this.addChild(character);
+
+    this.shuffleCharacters();
+
+    // Anim characters
+    // Loop spots
+    this.tl.setTimeBased();
+    this.tl
+      .then(function(){
+        if (! self.lightsAreOff()) {
+          for (var i = 0; i < self.characters.length; i++) {
+            self.characters[i].tl.setTimeBased();
+            self.characters[i].tl.moveY(self.characters[i].y + (Math.random() -1) * Math.sin(window.performance.now()) * 10, 10);
+          };
+          spots[currentSpot].tl.fadeOut(10);
+          currentSpot = (currentSpot + 1) % 3;
+          spots[currentSpot].tl.fadeIn(10);
+        }
+      })
+      .loop();
 
 
     // Preload spots
@@ -193,12 +214,13 @@ var SceneOne = Class.create(enchant.Group, {
     // Load switch
     var theSwitch = this.theSwitch = spritefromAsset(game.assets['distimg/interrupteur.png']);
     theSwitch.x = WIDTH * 0.9;
-    theSwitch.y = HEIGHT * 0.3;
+    theSwitch.y = HEIGHT * 0.84;
     theSwitch.touchEnabled = true;
     this.addChild(theSwitch);
 
     // Plug switch
     theSwitch.addEventListener('touchstart', function() {
+      self.shuffleCharacters();
       self.toggleLights();
     });
 
@@ -212,8 +234,8 @@ var SceneOne = Class.create(enchant.Group, {
     // Load throwables
     var object = spritefromAsset(game.assets['distimg/interrupteur.png']);
     object.name = 'heart';
-    object.x = object.original_x = WIDTH * 0.8;
-    object.y = object.original_y = HEIGHT * 2;
+    object.x = object.original_x = WIDTH * 0.45;
+    object.y = object.original_y = HEIGHT * 0.75;
     object.touchEnabled = true;
     this.addChild(object);
 
@@ -237,6 +259,14 @@ var SceneOne = Class.create(enchant.Group, {
     this.marked = this.characters[this.markedIdx];
     this.marker.tl
       .moveTo(this.characters[this.markedIdx].x + this.characters[this.markedIdx].width / 2, 0, 10);
+  },
+
+
+  shuffleCharacters: function () {
+    shuffle(this.characters);
+    this.characters[0].x = WIDTH / 6;
+    this.characters[1].x = WIDTH / 6 + this.characters[0].width / 2;
+    this.characters[2].x = WIDTH / 6 + this.characters[0].width / 2 + this.characters[1].width / 2;
   },
 
 

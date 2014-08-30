@@ -165,7 +165,7 @@ var SceneOne = Class.create(enchant.Group, {
     });
     /* */
 
-    var theBath = spritefromAsset(game.assets['distimg/bath.png']);
+    var theBath = spritefromAsset(game.assets['distimg/bain.png']);
     theBath.width = WIDTH;
     this.addChild(theBath);
 

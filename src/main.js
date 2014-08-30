@@ -192,6 +192,7 @@ var SceneOne = Class.create(enchant.Group, {
     theBath.width = WIDTH;
     this.addChild(theBath);
 
+    self.lastFlickering = window.performance.now();
 
     // Loop spots
     var currentSpot = 0;
@@ -202,10 +203,14 @@ var SceneOne = Class.create(enchant.Group, {
           spots[currentSpot].tl.fadeOut(10);
           currentSpot = (currentSpot + 1) % 3;
           spots[currentSpot].tl.fadeIn(10);
+
+          if (self.lastFlickering < window.performance.now() - 3000 - 5000 * Math.random()) {
+            self.lastFlickering = window.performance.now();
+            self.flickerAndOff();
+          }
         }
       })
       .loop();
-
 
     // The "lights off" layer
     var lightsOff = this.lightsOff = new enchant.Sprite(WIDTH, HEIGHT);
@@ -222,31 +227,62 @@ var SceneOne = Class.create(enchant.Group, {
     this.addChild(theSwitch);
 
     // Plug switch
-    theSwitch.addEventListener('touchstart', function() {
+    theSwitch.addEventListener('touchstart', function(event) {
       self.shuffleCharacters();
       self.toggleLights();
+      return false;
     });
 
 
     // Load marker
-    var marker = this.marker = spritefromAsset(game.assets['distimg/marker.png']);
+    var marker = this.marker = spritefromAsset(game.assets['distimg/disco1.png']);
     this.placeMarker(0);
     this.addChild(marker);
 
 
     // Load throwables
-    var object = spritefromAsset(game.assets['distimg/interrupteur.png']);
+    var object;
+    this.throwables = [];
+
+    /* * /
+    object = spritefromAsset(game.assets['distimg/objet-argent.png']);
     object.name = 'heart';
     object.x = object.original_x = WIDTH * 0.45;
     object.y = object.original_y = HEIGHT * 0.75;
     object.touchEnabled = true;
     this.addChild(object);
+    /* */
 
+    this.throwables.push(spritefromAsset(game.assets['distimg/objet-son.png']));
+    this.throwables.push(spritefromAsset(game.assets['distimg/objet-coeur.png']));
+    this.throwables.push(spritefromAsset(game.assets['distimg/objet-argent.png']));
 
-    setInterval(function () {
-      self.game.throwObject(object, { name:'chick', x:WIDTH/2 * Math.random(), y:-100 });
-    }, 1000);
+    this.queueNext();
 
+    // setInterval(function () {
+    //   self.game.throwObject(self.nextThrow, self.currentTarget());
+    // }, 1000);
+
+  },
+
+  queueNext: function () {
+    var sprite = this.randomSprite();
+    sprite.x = sprite.original_x = WIDTH * 0.45;
+    sprite.y = sprite.original_y = HEIGHT * 0.75;
+    this.nextThrow = sprite;
+    this.addChild(sprite);
+  },
+
+  currentTarget: function () {
+    return this.marked;
+  },
+
+  randomTarget: function () {
+    return this.characters[~~(Math.random() * this.characters.length)];
+  },
+
+  randomSprite: function () {
+    return this.throwables[~~(Math.random() * this.throwables.length)];
   },
 
   marked: null,
@@ -261,9 +297,25 @@ var SceneOne = Class.create(enchant.Group, {
     this.markedIdx = characterIdx;
     this.marked = this.characters[this.markedIdx];
     this.marker.tl
-      .moveTo(this.characters[this.markedIdx].x + this.characters[this.markedIdx].width / 2, 0, 10);
+      .moveTo(this.characters[this.markedIdx].x + this.characters[this.markedIdx].width / 2, -80, 5);
   },
 
+  flickerAndOff: function () {
+    var self = this;
+    this.tl.setTimeBased();
+    this.tl
+      .then(function () {
+        self.toggleLights(null, true);
+      })
+      .delay(1)
+      .then(function () {
+        self.toggleLights(null, true);
+      })
+      .delay(1)
+      .then(function () {
+        self.toggleLights(null, true);
+      });
+  },
 
   shuffleCharacters: function () {
     shuffle(this.characters);
@@ -277,9 +329,12 @@ var SceneOne = Class.create(enchant.Group, {
     return this.lightsOff.opacity > 0.5;
   },
 
-  toggleLights: function (event) {
+  toggleLights: function (event, noSwitch) {
     this.lightsOff.opacity = this.lightsAreOff() ? 0 : 0.98;
-    this.theSwitch.image = this.lightsAreOff() ? this.game.assets['distimg/interrupteur.png'] : this.game.assets['distimg/interrupteur2.png'];
+
+    if (! noSwitch) {
+      this.theSwitch.image = this.lightsAreOff() ? this.game.assets['distimg/interrupteur.png'] : this.game.assets['distimg/interrupteur2.png'];
+    }
 
     for (var i = 0; i < 3; i++) {
         this.spots[i].opacity = this.lightsAreOff() ? 0 : 1;
@@ -362,7 +417,10 @@ var Game = function () {
     'distimg/jeanmichel.png',
     'distimg/claudette1.png',
     'distimg/claudette2.png',
-    'distimg/marker.png'
+    'distimg/disco1.png',
+    'distimg/objet-argent.png',
+    'distimg/objet-coeur.png',
+    'distimg/objet-son.png',
   ];
 
   game.preload(preload); //preload assets png, wav etc
@@ -376,7 +434,9 @@ var Game = function () {
   });
 
   game.rootScene.addEventListener('touchstart', function(event) {
-    if (event.localX < WIDTH / 2)
+    if (event.localY > HEIGHT * 0.6)
+      game.throwObject(self.scene.nextThrow, self.scene.currentTarget());
+    else if (event.localX < WIDTH / 2)
       self.scene.moveLeft();
     else
       self.scene.moveRight();
@@ -410,8 +470,8 @@ var Game = function () {
 
           }
 
-          object.x = object.original_x;
-          object.y = object.original_y;
+          object.remove();
+          self.scene.queueNext();
       });
   };
 

@@ -2,8 +2,8 @@
 /* global enchant, Class, HEIGHT, WIDTH, SPEED, TRANSITION, PLAYER_LIVES */
 
 //init enchant.js
-HEIGHT = window.innerHeight * 2;
-WIDTH = window.innerWidth * 2;
+WIDTH = 800
+HEIGHT = 800
 SPEED = 800;
 TRANSITION = 10;
 
@@ -100,13 +100,35 @@ var SceneOne = Class.create(enchant.Group, {
 
     this.width   = WIDTH;
     this.height  = HEIGHT;
-    this.originX = WIDTH / 2;
-    this.originY = HEIGHT / 2;
+
+    var backgrounds = [];
+    for (var i = 0; i < 3; i++) {
+      var asset = game.assets['distimg/BG'+(i+1)+'.jpg'];
+      backgrounds[i] = new enchant.Sprite(asset.width, asset.height);
+      backgrounds[i].image = asset;
+      backgrounds[i].width = WIDTH;
+      backgrounds[i].touchEnabled = false;
+      backgrounds[i].disableCollection();
+      backgrounds[i].opacity = 0;
+      this.addChild(backgrounds[i]);
+    }
+
+    var currentBG = 0;
+    this.tl
+      .delay(20)
+      .then(function(){
+        backgrounds[currentBG].tl.fadeOut(10);
+        currentBG = (currentBG + 1) % 3;
+        backgrounds[currentBG].tl.fadeIn(10);
+      })
+      .loop();
 
   }
 });
 SceneOne.preload = [
-  'sounds/Jour.mp3',
+  'distimg/BG1.jpg',
+  'distimg/BG2.jpg',
+  'distimg/BG3.jpg',
 ];
 for (var i = 0; i < 6; i++) { SceneOne.preload.push('distimg/imm' + (i+1) + '-j-fs8.png'); }
 
@@ -121,9 +143,7 @@ var settings = {
     sprite: 'distimg/claude.png',
   },
   levels: [
-    {
-      upperScene: SceneOne,
-    }
+      SceneOne,
   ]
 };
 
@@ -187,12 +207,9 @@ var Game = function () {
   game.fps = 30;
 
   var preload = [
-    settings.player.sprite_j,
-    settings.player.sprite_n,
-    'sounds/Transition.mp3',
-    'distimg/fantome.png',
-    'distimg/coeurgris.png',
-    'distimg/coeurrouge.png','distimg/office-j.png','distimg/office-n.png'
+    'distimg/BG1.jpg',
+    'distimg/BG2.jpg',
+    'distimg/BG3.jpg',
   ];
 
   game.preload(preload); //preload assets png, wav etc
@@ -220,46 +237,17 @@ var Game = function () {
 
 Game.prototype.loadLevel = function(levelIndex) {
 
-  // if (this.upperScene || this.lowerScene) {
-  //   game.rootScene.removeChild(this.upperScene);
-  //   game.rootScene.removeChild(this.upperScenefg);
-  //   game.rootScene.removeChild(this.lowerScene);
-  //   game.rootScene.removeChild(this.lowerScenefg);
-  // }
+  if (this.scene) {
+    game.rootScene.removeChild(this.scene);
+  }
 
-  // this.upperScene = new settings.levels[levelIndex].upperScene(game);
-  // this.upperScenefg = new settings.levels[levelIndex].upperScenefg(game);
-  // this.Boss = new Sprite(game.assets['distimg/fantome.png'].width,game.assets['distimg/fantome.png'].height);
-  // this.Boss.image= game.assets['distimg/fantome.png'];
-  // game.rootScene.addChild(this.upperScene);
+  this.scene = new settings.levels[levelIndex](game);
+  game.rootScene.addChild(this.scene);
 
   // this.playerScene = new settings.levels[levelIndex].playerScene();
   // this.player = new Player();
-  // game.player=this.player;
+  // game.player = this.player;
   // this.playerScene.addChild(this.player);
-
-  // this.lowerScene = new settings.levels[levelIndex].lowerScene(game);
-  // this.lowerScenefg = new settings.levels[levelIndex].lowerScenefg(game);
-  // this.lowerScene.rotation = -180;
-  // this.lowerScenefg.rotation =- 180;
-  // game.rootScene.addChild(this.lowerScene);
-
-  // game.rootScene.addChild(this.playerScene);
-  // game.rootScene.addChild(this.upperScenefg);
-  // game.rootScene.addChild(this.lowerScenefg);
-  // var hqn = new Sprite(game.assets['distimg/office-n.png'].width,game.assets['distimg/office-n.png'].height);
-  // hqn.image=game.assets['distimg/office-n.png'];
-  // hqn.x=WIDTH/2;
-  // hqn.y=HEIGHT/2-hqn.height-166;
-  // this.lowerScene.addChild(hqn);
-  // hqn.tl.moveBy(SPEED*10,0,1000);
-
-  // this.lowerScenefg.addChild(this.Boss);
-  // this.upperScenefg.y = HEIGHT / 2;
-  // this.playerScene.y = HEIGHT / 2;
-  // this.upperScene.y = HEIGHT / 2;
-  // this.lowerScene.y = HEIGHT / 2;
-  // this.lowerScenefg.y = HEIGHT / 2;
 
   // game.infos = new SceneInfos(game, PLAYER_LIVES, this.loose.bind(this));
   // game.rootScene.addChild(game.infos);
